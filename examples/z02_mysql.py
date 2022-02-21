@@ -47,8 +47,8 @@ def fetchone():
     测试执行SQL语句
     :return:
     """
-    sql = "select * from user where id = 3"
-    result = m.fetchone(sql)
+    sql = "select name, pwd from user where id = %s"
+    result = m.fetchone(sql, (3,))
     m.log.info(f"查询单个结果：{result}")
 
 
@@ -103,7 +103,7 @@ def transaction_success():
 if __name__ == '__main__':
     # execute()
     # executes()
-    # fetchone()
+    fetchone()
     # fetchall()
     # transaction_error()
-    transaction_success()
+    # transaction_success()

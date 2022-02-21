@@ -1,2 +1,2 @@
-from .zdppy_mysql import Mysql, AsyncMysql
-
+from .mysql import Mysql
+from .async_mysql import AsyncMysql

@@ -131,3 +131,4 @@ dmypy.json
 **/.vscode
 **/__pycache__
 **/*.db
+main.py
