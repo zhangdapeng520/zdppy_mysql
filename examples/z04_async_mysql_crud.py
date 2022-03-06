@@ -15,7 +15,7 @@ async def add():
 
 
 async def add_many():
-    result = await  m.add_many("student", ["name", "age", "gender"], [["张三1", 22, True], ["张三2", 22, True]])
+    result = await  m.add_many("student", ["name", "age", "school_id"], [["张三1", 22, 1], ["张三2", 22, 1]])
     m.log.info(result)
 
 
@@ -84,7 +84,7 @@ async def find_by_page():
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     # loop.run_until_complete(add())
-    # loop.run_until_complete(add_many())
+    loop.run_until_complete(add_many())
     # loop.run_until_complete(delete_by_id())
     # loop.run_until_complete(delete_by_ids())
     # loop.run_until_complete(update_by_id())

@@ -1,10 +1,10 @@
 from zdppy_log import Log
-import aiomysql
+from .libs import aiomysql
 import asyncio
 import time
 from .exceptions import ConnectError
 from typing import Tuple, Any, List, Union
-import pymysql
+from .libs import pymysql
 from .sql import get_add_sql, get_add_many_sql, get_sql_delete_by_id, get_sql_delete_by_ids, get_sql_update_by_id, \
     get_sql_update_by_ids, get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page
 
