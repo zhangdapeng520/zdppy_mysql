@@ -10,8 +10,11 @@ from .libs import aiomysql
 import asyncio
 from .exceptions import ConnectError, ParamError
 from typing import Tuple, Any, List, Union
-from .sql import get_add_sql, get_add_many_sql, get_sql_delete_by_id, get_sql_delete_by_ids, get_sql_update_by_id, \
-    get_sql_update_by_ids, get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page
+from .sql import (
+    get_add_sql, get_add_many_sql, get_sql_delete_by_id,
+    get_sql_delete_by_ids, get_sql_update_by_id, get_sql_update_by_ids,
+    get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page,
+    get_create_table_sql)
 
 
 class AsyncMysql:
@@ -43,6 +46,9 @@ class AsyncMysql:
 
         # 数据库：{数据库名：是否存在}
         self.__databases = {}
+
+        # 表格：{表格名：是否存在}
+        self.__tables = {}
 
     async def get_pool(self):
         """
@@ -411,4 +417,87 @@ class AsyncMysql:
             sql = f"DROP DATABASE IF EXISTS {database_name};"
             result = await self.execute(sql)
             del self.__databases[database_name]
+            return result
+
+    async def create_table(self, table: str, id_column=None, columns: List = None, open_engine=True):
+        """
+        创建表格
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            await self.show_tables()
+
+        # 创建表格
+        if not self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            s = get_create_table_sql(table, id_column, columns, open_engine)
+            self.log.debug(f"创建表格的SQL语句：{s}")
+
+            # 创建表格
+            result = await self.execute(s)
+
+            # 返回结果
+            return result
+
+    async def show_tables(self):
+        """
+        查看所有的表格
+        :return:
+        """
+        sql = "show tables;"
+
+        # 获取数据库连接对象
+        if self.pool is None or self.pool is False:
+            self.pool = await self.get_pool()
+
+        # 准备响应数据
+        result = None
+
+        # 从连接池获取连接
+        async with self.pool.acquire() as conn:
+            # 执行SQL语句
+            async with conn.cursor() as cur:
+                await cur.execute(sql)
+                await conn.commit()
+
+                # 释放连接
+                conn.close()
+
+                # 处理结果
+                result = await cur.fetchall()
+                if result is not None:
+                    result = [database[0] for database in result]
+
+                    # 生成字典
+                    flags = [True for _ in result]
+                    temp_dict = dict(zip(result, flags))
+                    self.log.debug(f"数据库字典：{temp_dict}")
+
+                    # 更新字典
+                    self.__tables.update(temp_dict)
+        return result
+
+    async def delete_table(self, table: str):
+        """
+        删除表格
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            await self.show_tables()
+
+        # 整理SQL语句
+        s = f"drop table if exists {table};"
+
+        # 创建表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"删除表格的SQL语句：{s}")
+
+            # 删除表格
+            result = await self.execute(s)
+            del self.__tables[table]
+
+            # 返回结果
             return result

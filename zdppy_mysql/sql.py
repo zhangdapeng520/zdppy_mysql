@@ -234,6 +234,32 @@ def get_sql_find_by_page(table: str, columns: List[str],
     return s
 
 
+def get_create_table_sql(table: str, id_column=None, columns: List = None, open_engine=True):
+    """
+    获取创建表格的SQL语句
+    :return: 创建表格的SQL语句
+    """
+    # 处理id列
+    if id_column is None:
+        id_column = "id bigint primary key auto_increment,"
+
+    # 处理columns列表
+    if columns is None:
+        raise ParamError("columns不能为空")
+    columns_str = ",".join(columns)
+
+    # 引擎
+    engine_str = ";"
+    if open_engine:
+        engine_str = "engine = innodb charset=utf8mb4;"
+
+    # 整理SQL语句
+    s = f"create table if not exists {table} ({id_column} {columns_str}) {engine_str}"
+
+    # 返回SQL语句
+    return s
+
+
 if __name__ == '__main__':
     # print(get_add_sql("student", ["name", "age"]))
     print(get_add_many_sql("student", ["name", "age"]), [["张三", 22], ["李四", 33]])

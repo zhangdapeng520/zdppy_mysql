@@ -1,12 +1,11 @@
 from zdppy_log import Log
-from .libs import aiomysql
-import asyncio
-import time
-from .exceptions import ConnectError
 from typing import Tuple, Any, List, Union
 from .libs import pymysql
-from .sql import get_add_sql, get_add_many_sql, get_sql_delete_by_id, get_sql_delete_by_ids, get_sql_update_by_id, \
-    get_sql_update_by_ids, get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page
+from .sql import (
+    get_add_sql, get_add_many_sql, get_sql_delete_by_id,
+    get_sql_delete_by_ids, get_sql_update_by_id, get_sql_update_by_ids,
+    get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page,
+    get_create_table_sql)
 
 
 class Mysql:
@@ -31,11 +30,14 @@ class Mysql:
         self.port = port
         self.user = user
         self.password = password
-        self.db = db
+        self.database = db
         self.charset = charset
 
         # 数据库列表 {数据库名：是否存在}
         self.__databases = {}
+
+        # 表格列表 {表格名：是否存在}
+        self.__tables = {}
 
     def get_connection(self):
         """
@@ -49,7 +51,7 @@ class Mysql:
                                    port=self.port,
                                    user=self.user,
                                    password=self.password,
-                                   db=self.db,
+                                   db=self.database,
                                    charset=self.charset,
                                    cursorclass=pymysql.cursors.DictCursor
                                    )
@@ -335,4 +337,83 @@ class Mysql:
             sql = f"DROP DATABASE IF EXISTS {database_name};"
             result = self.execute(sql)
             del self.__databases[database_name]
+            return result
+
+    def create_table(self, table: str, id_column=None, columns: List = None, open_engine=True):
+        """
+        创建表格
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 创建表格
+        if not self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            s = get_create_table_sql(table, id_column, columns, open_engine)
+            self.log.debug(f"创建表格的SQL语句：{s}")
+
+            # 创建表格
+            result = self.execute(s)
+
+            # 返回结果
+            return result
+
+    def show_tables(self):
+        """
+        查看所有的表格
+        :return:
+        """
+        sql = "show tables;"
+
+        # 获取数据库连接对象
+        conn = self.get_connection()
+
+        # 从连接池获取连接
+        result = None
+        with conn:
+            # 执行SQL语句
+            with conn.cursor() as cur:
+                self.log.info(f"执行SQL语句：{sql}")
+                cur.execute(sql)
+                result = cur.fetchall()
+
+                # 提取表格名
+                if result is not None and isinstance(result, list):
+                    result = [table.get(f"Tables_in_{self.database}") for table in result]
+
+                    # 生成字典
+                    flags = [True for _ in result]
+                    temp_dict = dict(zip(result, flags))
+                    self.log.debug(f"数据库字典：{temp_dict}")
+
+                    # 更新字典
+                    self.__tables.update(temp_dict)
+
+            conn.commit()
+        return result
+
+    def delete_table(self, table: str):
+        """
+        删除表格
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        s = f"drop table if exists {table};"
+
+        # 创建表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"删除表格的SQL语句：{s}")
+
+            # 删除表格
+            result = self.execute(s)
+            del self.__tables[table]
+
+            # 返回结果
             return result
