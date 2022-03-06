@@ -41,6 +41,9 @@ class AsyncMysql:
         self.conn = None
         self.pool = None
 
+        # 数据库：{数据库名：是否存在}
+        self.__databases = {}
+
     async def get_pool(self):
         """
         初始化，获取数据库连接池
@@ -88,11 +91,11 @@ class AsyncMysql:
                 # 返回结果
                 return result
 
-    async def execute(self, sql, params):
+    async def execute(self, sql, params=None):
         """
         执行SQL语句
-        :param sql:
-        :param params:
+        :param sql:要执行的SQL语句
+        :param params:要传入的参数
         :return:
         """
 
@@ -341,3 +344,71 @@ class AsyncMysql:
                 d[columns[i]] = r[i]
             results.append(d)
         return results
+
+    async def show_databases(self):
+        """
+        查看所有的数据库
+        :return:
+        """
+        sql = "show databases;"
+        # 获取数据库连接对象
+        if self.pool is None or self.pool is False:
+            self.pool = await self.get_pool()
+
+        # 准备响应数据
+        result = None
+
+        # 从连接池获取连接
+        async with self.pool.acquire() as conn:
+            # 执行SQL语句
+            async with conn.cursor() as cur:
+                await cur.execute(sql)
+                await conn.commit()
+
+                # 释放连接
+                conn.close()
+
+                # 处理结果
+                result = await cur.fetchall()
+                if result is not None:
+                    result = [database[0] for database in result]
+
+                    # 生成字典
+                    flags = [True for _ in result]
+                    temp_dict = dict(zip(result, flags))
+                    self.log.debug(f"数据库字典：{temp_dict}")
+
+                    # 更新字典
+                    self.__databases.update(temp_dict)
+        return result
+
+    async def create_database(self, database_name: str):
+        """
+        创建数据库
+        :return:
+        """
+        # 查看数据库
+        if self.__databases is None or len(self.__databases) == 0:
+            await self.show_databases()
+
+        # 创建数据库
+        if not self.__databases.get(database_name):
+            sql = f"CREATE DATABASE IF NOT EXISTS `{database_name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+            result = self.execute(sql)
+            return result
+
+    async def delete_database(self, database_name: str):
+        """
+        删除数据库
+        :return:
+        """
+        # 查看数据库
+        if self.__databases is None or len(self.__databases) == 0:
+            await self.show_databases()
+
+        # 删除数据库
+        if self.__databases.get(database_name):
+            sql = f"DROP DATABASE IF EXISTS {database_name};"
+            result = await self.execute(sql)
+            del self.__databases[database_name]
+            return result

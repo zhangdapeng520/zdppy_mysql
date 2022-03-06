@@ -34,6 +34,9 @@ class Mysql:
         self.db = db
         self.charset = charset
 
+        # 数据库列表 {数据库名：是否存在}
+        self.__databases = {}
+
     def get_connection(self):
         """
         初始化，获取数据库连接池
@@ -83,11 +86,11 @@ class Mysql:
                 # 返回结果
                 return result
 
-    def execute(self, sql, params):
+    def execute(self, sql: str, params: Any = None):
         """
         执行SQL语句
-        :param sql:
-        :param params:
+        :param sql: 要执行的SQL语句
+        :param params: 要传进来的参数
         :return:
         """
 
@@ -269,3 +272,67 @@ class Mysql:
         """
         sql = get_sql_find_by_page(table, columns, page, size, asc_columns, desc_columns)
         return self.fetchall(sql)
+
+    def show_databases(self):
+        """
+        查看所有的数据库
+        :return:
+        """
+        sql = "show databases;"
+        # 获取数据库连接对象
+        conn = self.get_connection()
+
+        # 从连接池获取连接
+        result = None
+        with conn:
+            # 执行SQL语句
+            with conn.cursor() as cur:
+                self.log.info(f"执行SQL语句：{sql}")
+                cur.execute(sql)
+                result = cur.fetchall()
+
+                # 提取数据库名
+                if result is not None and isinstance(result, list):
+                    result = [database.get("Database") for database in result]
+
+                    # 生成字典
+                    flags = [True for _ in result]
+                    temp_dict = dict(zip(result, flags))
+                    self.log.debug(f"数据库字典：{temp_dict}")
+
+                    # 更新字典
+                    self.__databases.update(temp_dict)
+
+            conn.commit()
+        return result
+
+    def create_database(self, database_name: str):
+        """
+        创建数据库
+        :return:
+        """
+        # 查看数据库
+        if self.__databases is None or len(self.__databases) == 0:
+            self.show_databases()
+
+        # 创建数据库
+        if not self.__databases.get(database_name):
+            sql = f"CREATE DATABASE IF NOT EXISTS `{database_name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+            result = self.execute(sql)
+            return result
+
+    def delete_database(self, database_name: str):
+        """
+        删除数据库
+        :return:
+        """
+        # 查看数据库
+        if self.__databases is None or len(self.__databases) == 0:
+            self.show_databases()
+
+        # 删除数据库
+        if self.__databases.get(database_name):
+            sql = f"DROP DATABASE IF EXISTS {database_name};"
+            result = self.execute(sql)
+            del self.__databases[database_name]
+            return result
