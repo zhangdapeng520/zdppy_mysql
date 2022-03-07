@@ -417,3 +417,97 @@ class Mysql:
 
             # 返回结果
             return result
+
+    def rename_table(self, table: str, new_table: str):
+        """
+        重命名表格
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} rename to {new_table};"
+
+        # 重命名表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"重命名表格的SQL语句：{s}")
+
+            # 重命名表格
+            result = self.execute(s)
+            del self.__tables[table]
+            self.__tables[new_table] = True
+
+            # 返回结果
+            return result
+
+    def add_column(self, table: str, column: str, ctype: str):
+        """
+        修改表格，新增一列
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} add column {column} {ctype};"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = self.execute(s)
+
+            # 返回结果
+            return result
+
+    def delete_column(self, table: str, column: str):
+        """
+        修改表格，删除一列
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} drop column {column};"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = self.execute(s)
+
+            # 返回结果
+            return result
+
+    def update_column(self, table: str, column: str, new_column: str, new_column_type: str):
+        """
+        修改表格，修改一列
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} change column {column} {new_column} {new_column_type};"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = self.execute(s)
+
+            # 返回结果
+            return result
