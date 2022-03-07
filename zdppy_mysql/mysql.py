@@ -104,7 +104,8 @@ class Mysql:
         with conn:
             # 执行SQL语句
             with conn.cursor() as cur:
-                self.log.info(f"execute执行SQL语句：sql={sql} params={params}")
+                self.log.info(f"执行SQL语句：{sql}")
+                self.log.info(f"参数：{params}")
                 cur.execute(sql, params)
                 result = cur.rowcount
             conn.commit()
@@ -500,6 +501,105 @@ class Mysql:
 
         # 整理SQL语句
         s = f"alter table {table} change column {column} {new_column} {new_column_type};"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = self.execute(s)
+
+            # 返回结果
+            return result
+
+    def add_primary_key(self, table: str, column: str):
+        """
+        修改表格，添加主键
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} add primary key ({column});"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = self.execute(s)
+
+            # 返回结果
+            return result
+
+    def delete_primary_key(self, table: str):
+        """
+        修改表格，删除主键
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} drop primary key;"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = self.execute(s)
+
+            # 返回结果
+            return result
+
+    def add_foreign_key(self, table: str,
+                        foreign_key_column: str,
+                        reference_table: str,
+                        reference_primary_key: str = "id",
+                        foreign_key_name: str = None,
+                        ):
+        """
+        修改表格，添加外键
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        if foreign_key_name is None:
+            foreign_key_name = f"fk_{foreign_key_column}"
+        s = f"alter table {table} add constraint {foreign_key_name} foreign key({foreign_key_column}) references {reference_table}({reference_primary_key});"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = self.execute(s)
+
+            # 返回结果
+            return result
+
+    def delete_foreign_key(self, table: str, foreign_key_name: str):
+        """
+        修改表格，删除外键
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} drop foreign key {foreign_key_name};"
 
         # 修改表格
         if self.__tables.get(table):

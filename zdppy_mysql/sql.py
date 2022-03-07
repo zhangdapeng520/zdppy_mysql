@@ -242,6 +242,8 @@ def get_create_table_sql(table: str, id_column=None, columns: List = None, open_
     # 处理id列
     if id_column is None:
         id_column = "id bigint primary key auto_increment,"
+    else:
+        id_column = f"{id_column},"
 
     # 处理columns列表
     if columns is None:

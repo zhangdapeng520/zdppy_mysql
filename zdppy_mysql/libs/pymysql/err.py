@@ -98,12 +98,24 @@ del _map_error, ER
 
 
 def raise_mysql_exception(data):
+    """
+    抛出mysql异常
+    :param data: 异常信息
+    :return:
+    """
+    # 异常编号
     errno = struct.unpack('<h', data[1:3])[0]
+
+    # 异常信息
     is_41 = data[3:4] == b"#"
     if is_41:
         # client protocol 4.1
         errval = data[9:].decode('utf-8', 'replace')
     else:
         errval = data[3:].decode('utf-8', 'replace')
+
+    # 异常类
     errorclass = error_map.get(errno, InternalError)
+
+    # 抛出异常信息
     raise errorclass(errno, errval)

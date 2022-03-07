@@ -595,3 +595,102 @@ class AsyncMysql:
 
             # 返回结果
             return result
+
+    async def add_primary_key(self, table: str, column: str):
+        """
+        修改表格，添加主键
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            await self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} add primary key ({column});"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = await self.execute(s)
+
+            # 返回结果
+            return result
+
+    async def delete_primary_key(self, table: str):
+        """
+        修改表格，删除主键
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            await self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} drop primary key;"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = await self.execute(s)
+
+            # 返回结果
+            return result
+
+    async def add_foreign_key(self, table: str,
+                              foreign_key_column: str,
+                              reference_table: str,
+                              reference_primary_key: str = "id",
+                              foreign_key_name: str = None,
+                              ):
+        """
+        修改表格，添加外键
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            await self.show_tables()
+
+        # 整理SQL语句
+        if foreign_key_name is None:
+            foreign_key_name = f"fk_{foreign_key_column}"
+        s = f"alter table {table} add constraint {foreign_key_name} foreign key({foreign_key_column}) references {reference_table}({reference_primary_key});"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = await self.execute(s)
+
+            # 返回结果
+            return result
+
+    async def delete_foreign_key(self, table: str, foreign_key_name: str):
+        """
+        修改表格，删除外键
+        :return:
+        """
+        # 处理表格字典
+        if self.__tables is None or len(self.__tables) == 0:
+            await self.show_tables()
+
+        # 整理SQL语句
+        s = f"alter table {table} drop foreign key {foreign_key_name};"
+
+        # 修改表格
+        if self.__tables.get(table):
+            # 获取创建表格的SQL语句
+            self.log.debug(f"修改表格的SQL语句：{s}")
+
+            # 修改表格
+            result = await self.execute(s)
+
+            # 返回结果
+            return result
