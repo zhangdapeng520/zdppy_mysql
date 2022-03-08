@@ -1,3 +1,5 @@
+import json
+
 from zdppy_log import Log
 from typing import Tuple, Any, List, Union
 from .libs import pymysql
@@ -6,7 +8,7 @@ from .sql import (
     get_sql_delete_by_ids, get_sql_update_by_id, get_sql_update_by_ids,
     get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page,
     get_create_table_sql)
-
+from .json_encoder import JsonEncoder
 
 class Mysql:
     """
@@ -169,11 +171,12 @@ class Mysql:
         # 返回查询结果
         return result
 
-    def fetchall(self, sql: str, args: Tuple = None):
+    def fetchall(self, sql: str, args: Tuple = None, to_json: bool = False):
         """
         执行SQL语句
         :param sql:
         :param args:
+        :param to_json: 是否转换为json数据
         :return:
         """
 
@@ -192,6 +195,10 @@ class Mysql:
 
             # 提交事务
             conn.commit()
+
+        # 转换json数据
+        if to_json:
+            result = json.dumps(result, cls=JsonEncoder, ensure_ascii=False)
 
         # 返回查询结果
         return result
