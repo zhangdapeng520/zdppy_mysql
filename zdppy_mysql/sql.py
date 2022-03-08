@@ -189,6 +189,33 @@ def get_sql_find_by_ids(table: str, columns: List[str], ids_length: int):
     return s
 
 
+def get_sql_find_column_in(table: str, columns: List[str], column: str, values_length: int):
+    """
+    获取添加数据的字符串
+    :param table:
+    :param columns:
+    :return:
+    """
+    # 校验数据
+    if not table:
+        raise ParamError(f"table 参数错误：table={table}")
+    if columns and not isinstance(columns, List):
+        raise ParamError(f"columns 参数错误：columns={columns}")
+    if values_length and not isinstance(values_length, int):
+        raise ParamError(f"ids_length 参数错误：ids_length={values_length}")
+
+    # 准备参数
+    columns_str = "*"
+    if columns is not None:
+        columns_str = ", ".join(columns)
+    ids = ["%s" for _ in range(values_length)]
+    ids_str = ", ".join(ids)
+
+    # 准备sql
+    s = f"select {columns_str} from {table} where {column} in ({ids_str});"
+    return s
+
+
 def get_sql_find_by_page(table: str, columns: List[str],
                          page: int = 1,
                          size: int = 20,

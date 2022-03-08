@@ -7,8 +7,9 @@ from .sql import (
     get_add_sql, get_add_many_sql, get_sql_delete_by_id,
     get_sql_delete_by_ids, get_sql_update_by_id, get_sql_update_by_ids,
     get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page,
-    get_create_table_sql)
+    get_create_table_sql, get_sql_find_column_in)
 from .json_encoder import JsonEncoder
+
 
 class Mysql:
     """
@@ -618,3 +619,21 @@ class Mysql:
 
             # 返回结果
             return result
+
+    def find_column_in(self, table: str,
+                       column: str = None,
+                       values: Tuple = None,
+                       to_json: bool = False,
+                       show_columns: List = None,
+                       ):
+        """
+        根据指定字段执行in查询
+        :param table:
+        :param show_columns:
+        :param column:
+        :param values:
+        :param to_json:
+        :return:
+        """
+        sql = get_sql_find_column_in(table, show_columns, column, len(values))
+        return self.fetchall(sql, values, to_json=to_json)
