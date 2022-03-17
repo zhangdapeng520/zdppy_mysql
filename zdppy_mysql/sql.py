@@ -189,6 +189,31 @@ def get_sql_find_by_ids(table: str, columns: List[str], ids_length: int):
     return s
 
 
+def get_sql_find_all(
+        table: str,
+        columns: List[str]):
+    """
+    获取添加数据的字符串
+    :param table:
+    :param columns:
+    :return:
+    """
+    # 校验数据
+    if not table:
+        raise ParamError(f"table 参数错误：table={table}")
+    if columns and not isinstance(columns, List):
+        raise ParamError(f"columns 参数错误：columns={columns}")
+
+    # 准备参数
+    columns_str = "*"
+    if columns is not None:
+        columns_str = ", ".join(columns)
+
+    # 准备sql
+    s = f"select {columns_str} from {table};"
+    return s
+
+
 def get_sql_find_column_in(table: str, columns: List[str], column: str, values_length: int):
     """
     获取添加数据的字符串
@@ -261,7 +286,13 @@ def get_sql_find_by_page(table: str, columns: List[str],
     return s
 
 
-def get_create_table_sql(table: str, id_column=None, columns: List = None, open_engine=True):
+def get_create_table_sql(
+        table: str,
+        id_column=None,
+        columns: List = None,
+        open_engine=True,
+        open_common: bool = True,
+):
     """
     获取创建表格的SQL语句
     :return: 创建表格的SQL语句
@@ -275,6 +306,12 @@ def get_create_table_sql(table: str, id_column=None, columns: List = None, open_
     # 处理columns列表
     if columns is None:
         raise ParamError("columns不能为空")
+
+    # 添加公共字段
+    if open_common:
+        columns.append("create_time datetime not null default current_timestamp")  # 创建时机
+        columns.append("update_time timestamp not null on update current_timestamp default current_timestamp")  # 更新时间
+        columns.append("delete_time timestamp null")  # 删除时间
     columns_str = ",".join(columns)
 
     # 引擎

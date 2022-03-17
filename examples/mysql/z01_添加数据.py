@@ -5,7 +5,6 @@
 # @Site    : 
 # @File    : z01_添加数据.py
 # @Software: PyCharm
-import asyncio
 from zdppy_mysql import Mysql
 
 m = Mysql(host="127.0.0.1",
@@ -13,6 +12,15 @@ m = Mysql(host="127.0.0.1",
           user='root',
           password='root',
           db='test', )
+
+
+def create_table():
+    # 创建表格
+    columns = [
+        "name varchar(24)",
+    ]
+    result = m.create_table("school", columns=columns)
+    m.log.info(result)
 
 
 def school_add():
@@ -30,5 +38,6 @@ def school_add_many():
 
 
 if __name__ == '__main__':
+    create_table()
     school_add()
     school_add_many()

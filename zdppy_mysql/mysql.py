@@ -7,8 +7,9 @@ from .sql import (
     get_add_sql, get_add_many_sql, get_sql_delete_by_id,
     get_sql_delete_by_ids, get_sql_update_by_id, get_sql_update_by_ids,
     get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page,
-    get_create_table_sql, get_sql_find_column_in)
+    get_create_table_sql, get_sql_find_column_in, get_sql_find_all)
 from .json_encoder import JsonEncoder
+from .exceptions import ParamError
 
 
 class Mysql:
@@ -145,7 +146,7 @@ class Mysql:
         # 返回sql执行后影响的行数
         return count
 
-    def fetchone(self, sql: str, args: Tuple = None):
+    def fetchone(self, sql: str, args: Tuple = None, to_json=False):
         """
         执行SQL语句
         :param sql:
@@ -168,6 +169,10 @@ class Mysql:
 
             # 提交事务
             conn.commit()
+
+        # 转换json数据
+        if to_json:
+            result = json.dumps(result, cls=JsonEncoder, ensure_ascii=False)
 
         # 返回查询结果
         return result
@@ -272,7 +277,9 @@ class Mysql:
         sql = get_sql_find_by_ids(table, columns, len(ids))
         return self.fetchall(sql, ids)
 
-    def find_by_page(self, table: str, columns: Union[List[str], None],
+    def find_by_page(self,
+                     table: str,
+                     columns: Union[List[str], None],
                      page: int = 1,
                      size: int = 20,
                      asc_columns: List[str] = None,
@@ -282,6 +289,19 @@ class Mysql:
         :return:
         """
         sql = get_sql_find_by_page(table, columns, page, size, asc_columns, desc_columns)
+        return self.fetchall(sql)
+
+    def find_all(self,
+                 table: str,
+                 columns: Union[List[str], None],
+                 ):
+        """
+        查询所有
+        :param table 表格名
+        :param columns 字段列表
+        :return:
+        """
+        sql = get_sql_find_all(table, columns)
         return self.fetchall(sql)
 
     def show_databases(self):
@@ -348,9 +368,16 @@ class Mysql:
             del self.__databases[database_name]
             return result
 
-    def create_table(self, table: str, id_column=None, columns: List = None, open_engine=True):
+    def create_table(self,
+                     table: str,
+                     id_column=None,
+                     columns: List = None,
+                     open_engine=True,
+                     open_common: bool = True
+                     ):
         """
         创建表格
+        :param open_common 是否开启公共字段
         :return:
         """
         # 处理表格字典
@@ -360,7 +387,13 @@ class Mysql:
         # 创建表格
         if not self.__tables.get(table):
             # 获取创建表格的SQL语句
-            s = get_create_table_sql(table, id_column, columns, open_engine)
+            s = get_create_table_sql(
+                table,
+                id_column,
+                columns,
+                open_engine,
+                open_common,
+            )
             self.log.debug(f"创建表格的SQL语句：{s}")
 
             # 创建表格
