@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zdppy_mysql"
-version = "0.2.4"
+version = "0.2.5"
 description = "使用python操作MySQL,同步版本,支持事务"
 authors = ["zhangdapeng <pygosuperman@outlook.com>"]
 
