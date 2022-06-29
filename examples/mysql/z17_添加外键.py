@@ -19,12 +19,12 @@ student_columns = [
     "school_id bigint"
 ]
 result = m.create_table("school", columns=school_columns)
-m.log.info(result)
-m.log.info(m.show_tables())
+print(result)
+print(m.show_tables())
 
 result = m.create_table("student", columns=student_columns)
-m.log.info(result)
-m.log.info(m.show_tables())
+print(result)
+print(m.show_tables())
 
 # 添加外键
-m.log.info(m.add_foreign_key("student", "school_id", "school"))
+print(m.add_foreign_key("student", "school_id", "school"))

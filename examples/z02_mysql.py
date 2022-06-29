@@ -14,7 +14,7 @@ def executemany():
                ('一灰灰2 executemany', 'qwer', 0, int(time.time()), int(time.time()))]
     sql = "insert into user(`name`, `pwd`, `isDeleted`, `created`, `updated`) values (%s, %s, %s, %s, %s)"
     result = m.executemany(sql, records)
-    m.log.info(f"受影响的行数：{result}")
+    print(f"受影响的行数：{result}")
 
 
 def execute():
@@ -25,7 +25,7 @@ def execute():
     sql = "INSERT INTO `users` (`email`, `password`) VALUES (%s, %s)"
     params = ('webmaster@python.org', 'very-secret')
     result = m.execute(sql, params)
-    m.log.info(f"受影响的行数：{result}")
+    print(f"受影响的行数：{result}")
 
 
 def executes():
@@ -39,7 +39,7 @@ def executes():
     params2 = ('测试executes 222', 'qwer', 0, int(time.time()), int(time.time()))
     sqls = ((sql1, params1), (sql2, params2))
     result = m.executes(sqls)
-    m.log.info(f"受影响的行数：{result}")
+    print(f"受影响的行数：{result}")
 
 
 def fetchone():
@@ -49,7 +49,7 @@ def fetchone():
     """
     sql = "select name, pwd from user where id = %s"
     result = m.fetchone(sql, (3,))
-    m.log.info(f"查询单个结果：{result}")
+    print(f"查询单个结果：{result}")
 
 
 def fetchall():
@@ -59,7 +59,7 @@ def fetchall():
     """
     sql = "select * from user"
     result = m.fetchall(sql)
-    m.log.info(f"查询单个结果：{result}")
+    print(f"查询单个结果：{result}")
 
 
 def transaction_error():
@@ -78,7 +78,7 @@ def transaction_error():
     # 执行SQL
     sqls = ((sql1, params1), (sql2, params2))
     result = m.executes(sqls)
-    m.log.info(f"受影响的行数：{result}")
+    print(f"受影响的行数：{result}")
 
 
 def transaction_success():
@@ -97,13 +97,13 @@ def transaction_success():
     # 执行SQL
     sqls = ((sql1, params1), (sql2, params2))
     result = m.executes(sqls)
-    m.log.info(f"受影响的行数：{result}")
+    print(f"受影响的行数：{result}")
 
 
 if __name__ == '__main__':
-    # execute()
-    # executes()
+    execute()
+    executes()
     fetchone()
-    # fetchall()
-    # transaction_error()
-    # transaction_success()
+    fetchall()
+    transaction_error()
+    transaction_success()

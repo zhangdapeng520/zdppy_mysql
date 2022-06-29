@@ -24,8 +24,8 @@ where
         from course))
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")
 
 #  查询没有学全所有课程的同学的信息
@@ -45,6 +45,6 @@ where
     and   t1.SId=student.SId
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

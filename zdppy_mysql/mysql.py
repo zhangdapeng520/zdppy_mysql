@@ -1,15 +1,14 @@
 import json
 
-from zdppy_log import Log
 from typing import Tuple, Any, List, Union
-from .libs import pymysql
+
+import zdppy_mysql
 from .sql import (
     get_add_sql, get_add_many_sql, get_sql_delete_by_id,
     get_sql_delete_by_ids, get_sql_update_by_id, get_sql_update_by_ids,
     get_sql_find_by_id, get_sql_find_by_ids, get_sql_find_by_page,
     get_create_table_sql, get_sql_find_column_in, get_sql_find_all)
 from .json_encoder import JsonEncoder
-from .exceptions import ParamError
 
 
 class Mysql:
@@ -18,7 +17,6 @@ class Mysql:
     """
 
     def __init__(self,
-                 log_file_path: str = "logs/zdppy/zdopy_async_mysql.log",
                  host: str = "127.0.0.1",
                  port: int = 3306,
                  user: str = 'root',
@@ -26,8 +24,6 @@ class Mysql:
                  db: str = 'test',
                  charset: str = 'utf8'
                  ):
-        # 初始化日志
-        self.log = Log(log_file_path)
 
         # 初始化连接
         self.host = host
@@ -50,19 +46,16 @@ class Mysql:
         """
 
         try:
-            self.log.info("开始连接MySQL数据库")
-            conn = pymysql.connect(host=self.host,
+            conn = zdppy_mysql.connect(host=self.host,
                                    port=self.port,
                                    user=self.user,
                                    password=self.password,
                                    db=self.database,
                                    charset=self.charset,
-                                   cursorclass=pymysql.cursors.DictCursor
+                                   cursorclass=zdppy_mysql.cursors.DictCursor
                                    )
-            self.log.info("连接MySQL数据库成功")
             return conn
         except Exception as e:
-            self.log.error(f"mysql数据库连接失败：{e}")
             return False
 
     def executemany(self, sql, values):
@@ -108,8 +101,6 @@ class Mysql:
         with conn:
             # 执行SQL语句
             with conn.cursor() as cur:
-                self.log.info(f"执行SQL语句：{sql}")
-                self.log.info(f"参数：{params}")
                 cur.execute(sql, params)
                 result = cur.rowcount
             conn.commit()
@@ -134,12 +125,10 @@ class Mysql:
             with conn.cursor() as cur:
                 for sql in sqls:
                     try:
-                        self.log.info(f"execute执行SQL语句：sql={sql[0]}, params={sql[1]}")
                         cur.execute(sql[0], sql[1])
                     except Exception as e:
                         conn.rollback()
                         count = 0
-                        self.log.error(f"执行SQL语句{sql[0]}失败，事务回滚：{e}")
                     count += cur.rowcount
             conn.commit()
 
@@ -318,7 +307,6 @@ class Mysql:
         with conn:
             # 执行SQL语句
             with conn.cursor() as cur:
-                self.log.info(f"执行SQL语句：{sql}")
                 cur.execute(sql)
                 result = cur.fetchall()
 
@@ -329,7 +317,6 @@ class Mysql:
                     # 生成字典
                     flags = [True for _ in result]
                     temp_dict = dict(zip(result, flags))
-                    self.log.debug(f"数据库字典：{temp_dict}")
 
                     # 更新字典
                     self.__databases.update(temp_dict)
@@ -394,7 +381,6 @@ class Mysql:
                 open_engine,
                 open_common,
             )
-            self.log.debug(f"创建表格的SQL语句：{s}")
 
             # 创建表格
             result = self.execute(s)
@@ -417,7 +403,6 @@ class Mysql:
         with conn:
             # 执行SQL语句
             with conn.cursor() as cur:
-                self.log.info(f"执行SQL语句：{sql}")
                 cur.execute(sql)
                 result = cur.fetchall()
 
@@ -428,7 +413,6 @@ class Mysql:
                     # 生成字典
                     flags = [True for _ in result]
                     temp_dict = dict(zip(result, flags))
-                    self.log.debug(f"数据库字典：{temp_dict}")
 
                     # 更新字典
                     self.__tables.update(temp_dict)
@@ -450,9 +434,6 @@ class Mysql:
 
         # 创建表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"删除表格的SQL语句：{s}")
-
             # 删除表格
             result = self.execute(s)
             del self.__tables[table]
@@ -474,9 +455,6 @@ class Mysql:
 
         # 重命名表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"重命名表格的SQL语句：{s}")
-
             # 重命名表格
             result = self.execute(s)
             del self.__tables[table]
@@ -499,9 +477,6 @@ class Mysql:
 
         # 修改表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"修改表格的SQL语句：{s}")
-
             # 修改表格
             result = self.execute(s)
 
@@ -522,9 +497,6 @@ class Mysql:
 
         # 修改表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"修改表格的SQL语句：{s}")
-
             # 修改表格
             result = self.execute(s)
 
@@ -545,9 +517,6 @@ class Mysql:
 
         # 修改表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"修改表格的SQL语句：{s}")
-
             # 修改表格
             result = self.execute(s)
 
@@ -568,9 +537,6 @@ class Mysql:
 
         # 修改表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"修改表格的SQL语句：{s}")
-
             # 修改表格
             result = self.execute(s)
 
@@ -591,9 +557,6 @@ class Mysql:
 
         # 修改表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"修改表格的SQL语句：{s}")
-
             # 修改表格
             result = self.execute(s)
 
@@ -621,9 +584,6 @@ class Mysql:
 
         # 修改表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"修改表格的SQL语句：{s}")
-
             # 修改表格
             result = self.execute(s)
 
@@ -644,9 +604,6 @@ class Mysql:
 
         # 修改表格
         if self.__tables.get(table):
-            # 获取创建表格的SQL语句
-            self.log.debug(f"修改表格的SQL语句：{s}")
-
             # 修改表格
             result = self.execute(s)
 

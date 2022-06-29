@@ -24,6 +24,6 @@ where sc.CId is null )
 and student.SId !='01'
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

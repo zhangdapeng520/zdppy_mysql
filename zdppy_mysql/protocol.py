@@ -4,8 +4,8 @@
 from __future__ import print_function
 from .charset import MBLENGTH
 from ._compat import PY2, range_type
-from .constants import FIELD_TYPE, SERVER_STATUS
-from . import err
+from zdppy_mysql.constants import FIELD_TYPE, SERVER_STATUS
+from zdppy_mysql import err
 from .util import byte2int
 
 import struct

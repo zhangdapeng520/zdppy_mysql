@@ -18,6 +18,6 @@ GROUP BY sc.CId
 ORDER BY count(*)DESC,sc.CId asc
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

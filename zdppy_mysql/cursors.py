@@ -5,7 +5,7 @@ import re
 import warnings
 
 from ._compat import range_type, text_type, PY2
-from . import err
+from zdppy_mysql import err
 
 
 #: Regular expression for :meth:`Cursor.executemany`.

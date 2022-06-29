@@ -20,6 +20,6 @@ GROUP BY sc.SId) as t1 on sc.SId =t1.SId
 ORDER BY t1.avgscore DESC
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

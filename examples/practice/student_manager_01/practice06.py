@@ -9,5 +9,5 @@ from score
 where CNO = '3-105';
 """
 
-m.log.info(m.fetchone(sql, to_json=True))
+print(m.fetchone(sql, to_json=True))
     

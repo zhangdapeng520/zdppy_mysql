@@ -17,6 +17,6 @@ from student , sc
 where student.SId=sc.SId
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

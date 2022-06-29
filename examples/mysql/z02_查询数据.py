@@ -18,34 +18,34 @@ def find_by_id():
     columns = ["name"]
     id = 10
     result = m.find_by_id("school", columns, id)
-    m.log.info(result)
+    print(result)
     result = m.find_by_id("school", None, id)
-    m.log.info(result)
+    print(result)
 
 
 def find_by_ids():
     columns = ["name"]
     ids = (10, 11, 12)
     result = m.find_by_ids("school", columns, ids)
-    m.log.info(result)
+    print(result)
     result = m.find_by_ids("school", None, ids)
-    m.log.info(result)
+    print(result)
 
 
 def find_by_page():
     columns = ["name"]
     result = m.find_by_page("school", columns, asc_columns=["id"])
-    m.log.info(result)
+    print(result)
     result = m.find_by_page("school", None, desc_columns=["id"])
-    m.log.info(result)
+    print(result)
 
 
 def find_all():
     columns = ["name"]
     result = m.find_all("school", columns)
-    m.log.info(result)
+    print(result)
     result = m.find_all("school", None)
-    m.log.info(result)
+    print(result)
 
 
 if __name__ == '__main__':

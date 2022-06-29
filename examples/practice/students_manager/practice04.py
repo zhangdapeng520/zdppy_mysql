@@ -20,8 +20,8 @@ from student ,(
 where student.SId =t1.SId
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")
 
 #  查有成绩的学生信息
@@ -31,6 +31,6 @@ from student
 where EXISTS(select * from sc where student.SId=sc.SId)
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

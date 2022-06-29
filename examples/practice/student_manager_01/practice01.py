@@ -7,12 +7,12 @@ sql = """
 select * from score where degree > 60 and degree < 80;
 """
 
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")
 
 sql = """
 select * from score where degree between 60 and 80;
 """
 
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

@@ -19,24 +19,24 @@ student_columns = [
     "school_id bigint"
 ]
 # 删除表
-m.log.info(m.delete_table("student"))
-m.log.info(m.delete_table("school"))
+print(m.delete_table("student"))
+print(m.delete_table("school"))
 
 # 创建表
 result = m.create_table("school", columns=school_columns)
-m.log.info(result)
-m.log.info(m.show_tables())
+print(result)
+print(m.show_tables())
 
 result = m.create_table("student", columns=student_columns)
-m.log.info(result)
-m.log.info(m.show_tables())
+print(result)
+print(m.show_tables())
 
 # 添加外键
-m.log.info(m.add_foreign_key("student", "school_id", "school"))
+print(m.add_foreign_key("student", "school_id", "school"))
 
 # 删除外键
-m.log.info(m.delete_foreign_key("student", "fk_school_id"))
+print(m.delete_foreign_key("student", "fk_school_id"))
 
 # 删除表不再受外键约束
-m.log.info(m.delete_table("school"))
-m.log.info(m.delete_table("student"))
+print(m.delete_table("school"))
+print(m.delete_table("student"))

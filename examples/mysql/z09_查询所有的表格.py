@@ -9,4 +9,4 @@ from zdppy_mysql import Mysql
 
 m = Mysql(db="test")
 
-m.log.info(m.show_tables())
+print(m.show_tables())

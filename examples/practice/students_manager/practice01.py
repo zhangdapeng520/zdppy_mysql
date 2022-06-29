@@ -20,8 +20,8 @@ where t1.SId = t2.SId # 筛选学生
 and t1.score > t2.score; # 课程01的分数比课程02的分数高
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")
 
 
@@ -34,8 +34,8 @@ from
 where t1.SId=t2.SId;
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")
 
 
@@ -48,8 +48,8 @@ from
 on t1.SId=t2.SId
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")
 
 
@@ -61,7 +61,7 @@ where sc.SId not in (select SId from sc where sc.CId='01') # 不存在课程01
 and  sc.CId='02'; # 存在课程02
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")
 

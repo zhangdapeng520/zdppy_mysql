@@ -14,11 +14,11 @@ import sys
 import traceback
 import warnings
 
-from . import _auth
+from zdppy_mysql import _auth
 
 from .charset import charset_by_name, charset_by_id
-from .constants import CLIENT, COMMAND, CR, FIELD_TYPE, SERVER_STATUS
-from . import converters
+from zdppy_mysql.constants import CLIENT, COMMAND, CR, FIELD_TYPE, SERVER_STATUS
+from zdppy_mysql import converters
 from .cursors import Cursor
 from .optionfile import Parser
 from .protocol import (
@@ -26,7 +26,7 @@ from .protocol import (
     EOFPacketWrapper, LoadLocalPacketWrapper
 )
 from .util import byte2int, int2byte
-from . import err, VERSION_STRING
+from zdppy_mysql import err, VERSION_STRING
 
 try:
     import ssl

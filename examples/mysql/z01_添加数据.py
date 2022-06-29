@@ -20,12 +20,12 @@ def create_table():
         "name varchar(24)",
     ]
     result = m.create_table("school", columns=columns)
-    m.log.info(result)
+    print(result)
 
 
 def school_add():
     result = m.add("school", ["name"], ["北京大学"])
-    m.log.info(result)
+    print(result)
 
 
 def school_add_many():
@@ -34,7 +34,7 @@ def school_add_many():
         for i in range(100)
     ]
     result = m.add_many("school", ["name"], data)
-    m.log.info(result)
+    print(result)
 
 
 if __name__ == '__main__':

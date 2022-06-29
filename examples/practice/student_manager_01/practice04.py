@@ -9,4 +9,4 @@ from student
 where student.CLASS = '95031';
 """
 
-m.log.info(m.fetchone(sql))
+print(m.fetchone(sql))

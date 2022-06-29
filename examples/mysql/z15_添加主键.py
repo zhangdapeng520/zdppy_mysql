@@ -15,8 +15,8 @@ columns = [
     "age smallint"
 ]
 result = m.create_table("test_user", columns=columns, id_column="id bigint")
-m.log.info(result)
-m.log.info(m.show_tables())
+print(result)
+print(m.show_tables())
 
 # 添加主键
-m.log.info(m.add_primary_key("test_user", "id"))
+print(m.add_primary_key("test_user", "id"))

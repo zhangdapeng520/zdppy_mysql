@@ -20,6 +20,6 @@ GROUP BY sc.SId
 HAVING count(*)>=2
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

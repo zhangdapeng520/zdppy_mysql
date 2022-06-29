@@ -9,4 +9,4 @@ from score
 order by CNO asc, degree desc;
 """
 
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql, to_json=True))

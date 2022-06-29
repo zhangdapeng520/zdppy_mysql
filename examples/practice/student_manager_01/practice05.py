@@ -12,7 +12,7 @@ where DEGREE = (
 );
 """
 
-m.log.info(m.fetchone(sql))
+print(m.fetchone(sql))
 
 # 方法2：效率更高
 sql = """
@@ -22,4 +22,4 @@ order by DEGREE desc
 limit 1;
 """
 
-m.log.info(m.fetchone(sql))
+print(m.fetchone(sql))

@@ -1,6 +1,6 @@
 import struct
 
-from .constants import ER
+from zdppy_mysql.constants import ER
 
 
 class MySQLError(Exception):

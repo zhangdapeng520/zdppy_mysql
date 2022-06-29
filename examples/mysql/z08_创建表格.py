@@ -15,5 +15,5 @@ columns = [
     "age smallint"
 ]
 result = m.create_table("test_user", columns=columns)
-m.log.info(result)
-m.log.info(m.show_tables())
+print(result)
+print(m.show_tables())

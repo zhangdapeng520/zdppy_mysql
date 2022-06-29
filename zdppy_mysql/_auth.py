@@ -2,7 +2,7 @@
 Implements auth methods
 """
 from ._compat import text_type, PY2
-from .constants import CLIENT
+from zdppy_mysql.constants import CLIENT
 from .err import OperationalError
 from .util import byte2int, int2byte
 

@@ -18,6 +18,6 @@ where sc.CId in (select CId from sc where sc.SId='01')
 and   sc.SId=student.SId
 """
 
-m.log.info(m.fetchall(sql))
-m.log.info(m.fetchall(sql, to_json=True))
+print(m.fetchall(sql))
+print(m.fetchall(sql, to_json=True))
 print("--------------------------------")

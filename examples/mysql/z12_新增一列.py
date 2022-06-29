@@ -8,6 +8,6 @@
 from zdppy_mysql import Mysql
 
 m = Mysql(db="test")
-m.log.info(m.show_tables())
-m.log.info(m.add_column("school", "address", "varchar(22)"))
-m.log.info(m.show_tables())
+print(m.show_tables())
+print(m.add_column("school", "address", "varchar(22)"))
+print(m.show_tables())
