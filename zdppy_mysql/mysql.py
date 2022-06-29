@@ -47,13 +47,13 @@ class Mysql:
 
         try:
             conn = zdppy_mysql.connect(host=self.host,
-                                   port=self.port,
-                                   user=self.user,
-                                   password=self.password,
-                                   db=self.database,
-                                   charset=self.charset,
-                                   cursorclass=zdppy_mysql.cursors.DictCursor
-                                   )
+                                       port=self.port,
+                                       user=self.user,
+                                       password=self.password,
+                                       db=self.database,
+                                       charset=self.charset,
+                                       cursorclass=zdppy_mysql.cursors.DictCursor
+                                       )
             return conn
         except Exception as e:
             return False

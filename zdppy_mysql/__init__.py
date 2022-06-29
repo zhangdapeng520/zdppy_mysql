@@ -1,6 +1,5 @@
 from .mysql import Mysql
 import sys
-
 from ._compat import PY2
 from .constants import FIELD_TYPE
 from .converters import escape_dict, escape_sequence, escape_string
@@ -55,17 +54,15 @@ ROWID = DBAPISet()
 
 
 def Binary(x):
-    """Return x as a binary type."""
-    if PY2:
-        return bytearray(x)
-    else:
-        return bytes(x)
+    """
+    返回x的二进制类型
+    """
+    return bytes(x)
 
 
 def Connect(*args, **kwargs):
     """
-    Connect to the database; see connections.Connection.__init__() for
-    more information.
+    连接到数据库
     """
     from .connections import Connection
     return Connection(*args, **kwargs)
@@ -78,7 +75,10 @@ if _orig_conn.Connection.__init__.__doc__ is not None:
 del _orig_conn
 
 
-def get_client_info():  # for MySQLdb compatibility
+def get_client_info():
+    """
+    获取客户端信息
+    """
     version = VERSION
     if VERSION[3] is None:
         version = VERSION[:3]
@@ -87,7 +87,7 @@ def get_client_info():  # for MySQLdb compatibility
 
 connect = Connection = Connect
 
-# we include a doctored version_info here for MySQLdb compatibility
+# 版本信息
 version_info = (1, 3, 12, "final", 0)
 
 NULL = "NULL"
@@ -96,7 +96,10 @@ __version__ = get_client_info()
 
 
 def thread_safe():
-    return True  # match MySQLdb.thread_safe()
+    """
+    线程安全，实现MySQLdb.thread_safe()
+    """
+    return True
 
 
 def install_as_MySQLdb():

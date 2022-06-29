@@ -149,18 +149,10 @@ class Cursor(object):
         return query
 
     def execute(self, query, args=None):
-        """Execute a query
-
-        :param str query: Query to execute.
-
-        :param args: parameters used with query. (optional)
-        :type args: tuple, list or dict
-
-        :return: Number of affected rows
-        :rtype: int
-
-        If args is a list or tuple, %s can be used as a placeholder in the query.
-        If args is a dict, %(name)s can be used as a placeholder in the query.
+        """执行SQL语句
+        query: 要执行的SQL语句
+        args: 查询参数
+        return: 受影响的行数
         """
         while self.nextset():
             pass

@@ -6,11 +6,11 @@ from zdppy_mysql.constants import CLIENT
 from .err import OperationalError
 from .util import byte2int, int2byte
 
-
 try:
     from cryptography.hazmat.backends import default_backend
     from cryptography.hazmat.primitives import serialization, hashes
     from cryptography.hazmat.primitives.asymmetric import padding
+
     _have_cryptography = True
 except ImportError:
     _have_cryptography = False
@@ -20,7 +20,6 @@ import hashlib
 import io
 import struct
 import warnings
-
 
 DEBUG = False
 SCRAMBLE_LENGTH = 20
@@ -32,7 +31,9 @@ sha1_new = partial(hashlib.new, 'sha1')
 
 
 def scramble_native_password(password, message):
-    """Scramble used for mysql_native_password"""
+    """
+    Scramble用于mysql_native_password
+    """
     if not password:
         return b''
 
@@ -76,7 +77,7 @@ class RandStruct_323(object):
 
 
 def scramble_old_password(password, message):
-    """Scramble for old_password"""
+    """Scramble 用于 old_password"""
     warnings.warn("old password (for MySQL <4.1) is used.  Upgrade your password with newer auth method.\n"
                   "old password support will be removed in future PyMySQL version")
     hash_pass = _hash_password_323(password)
@@ -134,12 +135,12 @@ def _xor_password(password, salt):
 
 
 def sha2_rsa_encrypt(password, salt, public_key):
-    """Encrypt password with salt and public_key.
-
-    Used for sha256_password and caching_sha2_password.
+    """
+    使用盐和公钥加密密码
+    用于sha256_password和caching_sha2_password.
     """
     if not _have_cryptography:
-        raise RuntimeError("cryptography is required for sha256_password or caching_sha2_password")
+        raise RuntimeError("sha256_password 或 caching_sha2_password 必须 cryptography 加密")
     message = _xor_password(password + b'\0', salt)
     rsa_key = serialization.load_pem_public_key(public_key, default_backend())
     return rsa_key.encrypt(
@@ -155,27 +156,25 @@ def sha2_rsa_encrypt(password, salt, public_key):
 def sha256_password_auth(conn, pkt):
     if conn._secure:
         if DEBUG:
-            print("sha256: Sending plain password")
+            print("sha256: 发送明文密码")
         data = conn.password + b'\0'
         return _roundtrip(conn, data)
 
     if pkt.is_auth_switch_request():
         conn.salt = pkt.read_all()
         if not conn.server_public_key and conn.password:
-            # Request server public key
             if DEBUG:
-                print("sha256: Requesting server public key")
+                print("sha256: 请求服务公钥")
             pkt = _roundtrip(conn, b'\1')
 
     if pkt.is_extra_auth_data():
         conn.server_public_key = pkt._data[1:]
         if DEBUG:
-            print("Received public key:\n", conn.server_public_key.decode('ascii'))
+            print("接收到公钥:\n", conn.server_public_key.decode('ascii'))
 
     if conn.password:
         if not conn.server_public_key:
-            raise OperationalError("Couldn't receive server's public key")
-
+            raise OperationalError("获取服务公钥失败")
         data = sha2_rsa_encrypt(conn.password, conn.salt, conn.server_public_key)
     else:
         data = b''
@@ -185,7 +184,8 @@ def sha256_password_auth(conn, pkt):
 
 def scramble_caching_sha2(password, nonce):
     # (bytes, bytes) -> bytes
-    """Scramble algorithm used in cached_sha2_password fast path.
+    """
+    Scramble 算法用于 cached_sha2_password 路径匹配
 
     XOR(SHA256(password), SHA256(SHA256(SHA256(password)), nonce))
     """

@@ -20,4 +20,3 @@ def int2byte(i):
     :return: 字节
     """
     return struct.pack("!B", i)
-
